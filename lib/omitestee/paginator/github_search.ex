@@ -16,12 +16,21 @@ defmodule Omitestee.Paginator.GitHubSearch do
       %{per_page: per_page()} |> Map.merge(params))
   end
 
-  ## Private auxiliary functions
+  ## Private and auxiliary functions
+
+  @doc "Returns `per_page` value from configuration."
+  def per_page() do
+    Application.get_env(:omitestee, :paginator) |> get_in([:per_page])
+  end
+
+  @doc "Returns GitHub hard limit for items."
+  def items_limit(), do: 1_000
 
   defp request(item, query, params) do
     url = url(item, query, params)
 
-    with {:ok, %{body: body}} <- HTTPoison.get(URI.encode(url), [], hackhey: [pool: :default]),
+    with {:ok, %{body: body}} <- HTTPoison.get(URI.encode(url), [],
+              hackhey: [pool: :default]),
          {:ok, payload} <- Jason.decode(body, keys: :atoms) do
       {:ok, payload}
     else
@@ -38,10 +47,5 @@ defmodule Omitestee.Paginator.GitHubSearch do
     |> Map.to_list
     |> Enum.map(fn {k, v} -> "&#{k}=#{v}" end)
     |> Enum.join
-  end
-
-  defp per_page() do
-    Application.get_env(:omitestee, :paginator)
-    |> get_in([:per_page])
   end
 end

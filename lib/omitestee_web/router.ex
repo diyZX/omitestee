@@ -13,15 +13,15 @@ defmodule OmitesteeWeb.Router do
     plug :accepts, ["json"]
   end
 
-  # scope "/", OmitesteeWeb do
-  #   pipe_through :browser
-
-  #   get "/", PageController, :index
-  # end
-
   scope "/api", OmitesteeWeb do
     pipe_through :api
 
     post "/document", API.DocumentController, :reorganize
+  end
+
+  scope "/", OmitesteeWeb do
+    pipe_through(:browser)
+
+    get("/search", SearchController, :index, as: :node)
   end
 end

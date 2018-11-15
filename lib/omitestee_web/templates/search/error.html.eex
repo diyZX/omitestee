@@ -1,0 +1,5 @@
+<section class="phx-hero">
+  <%= @message %>
+  <br />
+  <%= link "Try again", to: "/search" %>
+</section>
