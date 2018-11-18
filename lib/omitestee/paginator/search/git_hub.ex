@@ -1,30 +1,35 @@
-defmodule Omitestee.Paginator.GitHubSearch do
+defmodule Omitestee.Paginator.Search.GitHub do
   @moduledoc """
   Wrapper module to fetch data from
   [GitHub Search API](https://developer.github.com/v3/guides/traversing-with-pagination)
   with pagination.
   """
 
+  alias Omitestee.Paginator.Search
+
+  @behaviour Search
+
   @endpoint "https://api.github.com/search"
 
-  @doc """
-  Finds all the repositories that match a query.
-  """
-  @spec repositories(String.t(), map()) :: {:ok, map()} | {:error, atom()}
+  @impl Search
   def repositories(query, params \\ %{}) do
     request(:repositories, query,
       %{per_page: per_page()} |> Map.merge(params))
   end
 
-  ## Private and auxiliary functions
-
-  @doc "Returns `per_page` value from configuration."
+  @impl Search
   def per_page() do
-    Application.get_env(:omitestee, :paginator) |> get_in([:per_page])
+    Application.get_env(:omitestee, :paginator)
+    |> get_in([:per_page])
   end
 
-  @doc "Returns GitHub hard limit for items."
-  def items_limit(), do: 1_000
+  @impl Search
+  def items_limit() do
+    Application.get_env(:omitestee, :paginator)
+    |> get_in([:github_limit])
+  end
+
+  ## Private and auxiliary functions
 
   defp request(item, query, params) do
     url = url(item, query, params)

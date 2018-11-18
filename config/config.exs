@@ -26,6 +26,8 @@ config :scrivener_html,
 config :phoenix, :json_library, Jason
 
 config :omitestee, :paginator,
+  search: Omitestee.Paginator.Search.GitHub,
+  github_limit: 1_000,
   per_page: 10
 
 # Import environment specific config. This must remain at the bottom

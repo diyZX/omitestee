@@ -8,3 +8,7 @@ config :omitestee, OmitesteeWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :omitestee, :paginator,
+  search: Omitestee.Paginator.Search.Mock,
+  per_page: 10

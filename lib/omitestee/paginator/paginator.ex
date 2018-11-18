@@ -5,18 +5,20 @@ defmodule Omitestee.Paginator do
   """
 
   alias Scrivener.Page
-  alias Omitestee.Paginator.{GitHubSearch, Repository}
+  alias Omitestee.Paginator.Repository
+
+  @search Application.get_env(:omitestee, :paginator) |> get_in([:search])
 
   @spec paginate(String.t(), map()) :: Scrivener.Page.t()
   def paginate(query, %{page_number: page_number}) do
     case repositories(query, page_number) do
       {:ok, %{items: repos, total_count: total_repos}} ->
-        total_entries = (if total_repos < GitHubSearch.items_limit(),
-          do: total_repos, else: GitHubSearch.items_limit())
-        total_pages = total_pages(total_entries, GitHubSearch.per_page())
+        total_entries = (if total_repos < @search.items_limit(),
+          do: total_repos, else: @search.items_limit())
+        total_pages = total_pages(total_entries, @search.per_page())
 
         {:ok, %Page{
-          page_size: GitHubSearch.per_page(),
+          page_size: @search.per_page(),
           page_number: page_number(page_number, total_pages),
           entries: repos |> Enum.map(&Repository.new/1),
           total_entries: total_entries,
@@ -38,8 +40,8 @@ defmodule Omitestee.Paginator do
   end
 
   defp try_repositories(query, page_number) do
-    GitHubSearch.repositories(query,
-      %{sort: :stars, page: page_number, per_page: GitHubSearch.per_page()})
+    @search.repositories(query,
+      %{sort: :stars, page: page_number, per_page: @search.per_page()})
   end
 
   defp total_pages(0, _), do: 1
