@@ -7,11 +7,9 @@ defmodule Omitestee.Paginator do
   alias Scrivener.Page
   alias Omitestee.Paginator.{GitHubSearch, Repository}
 
-  @hardcoded_query "elixir"
-
-  @spec paginate(map()) :: Scrivener.Page.t()
-  def paginate(%{page_number: page_number}) do
-    case repositories(page_number) do
+  @spec paginate(String.t(), map()) :: Scrivener.Page.t()
+  def paginate(query, %{page_number: page_number}) do
+    case repositories(query, page_number) do
       {:ok, %{items: repos, total_count: total_repos}} ->
         total_entries = (if total_repos < GitHubSearch.items_limit(),
           do: total_repos, else: GitHubSearch.items_limit())
@@ -31,16 +29,16 @@ defmodule Omitestee.Paginator do
 
   ## Private auxiliary functions
 
-  defp repositories(page_number) do
-    response = try_repositories(page_number)
+  defp repositories(query, page_number) do
+    response = try_repositories(query, page_number)
     case response do
-      {:ok, %{message: _}} -> try_repositories(1)
+      {:ok, %{message: _}} -> try_repositories(query, 1)
       {:ok, %{items: _, total_count: _}} -> response
     end
   end
 
-  defp try_repositories(page_number) do
-    GitHubSearch.repositories(@hardcoded_query,
+  defp try_repositories(query, page_number) do
+    GitHubSearch.repositories(query,
       %{sort: :stars, page: page_number, per_page: GitHubSearch.per_page()})
   end
 

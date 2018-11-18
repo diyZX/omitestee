@@ -3,14 +3,16 @@ defmodule OmitesteeWeb.SearchController do
 
   alias Omitestee.Paginator
 
+  @hardcoded_query "elixir"
+
   def index(conn, params) do
     config = %{page_number: page(params["page"])}
 
-    case Paginator.paginate(config) do
+    case Paginator.paginate(@hardcoded_query, config) do
       {:ok, page} ->
-        render(conn, "index.html", page: page)
+        render(conn, "index.html", query: @hardcoded_query, page: page)
       {:error, message} ->
-        render(conn, "error.html", message: message)
+        render(conn, "message.html", message: message)
     end
   end
 

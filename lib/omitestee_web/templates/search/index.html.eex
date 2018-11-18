@@ -1,5 +1,5 @@
 <section class="phx-hero">
-  GitHub Repositories: <b>elixir</b><br />
+  GitHub Repositories: <b><%= @query %></b><br />
 
   <%= for {text, page_number} <- raw_pagination_links(@page,
     [distance: 3, previous: "<<", next: ">>", first: true, last: true]) do %>
