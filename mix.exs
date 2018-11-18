@@ -43,8 +43,7 @@ defmodule Omitestee.MixProject do
       {:scrivener_html, "~> 1.7"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:httpoison, "~> 1.4"},
-      {:ok, "~> 2.0"}
+      {:httpoison, "~> 1.4"}
     ]
   end
 end
