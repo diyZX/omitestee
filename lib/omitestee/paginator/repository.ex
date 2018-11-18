@@ -18,15 +18,10 @@ defmodule Omitestee.Paginator.Repository do
   end
 
   @spec changeset(t(), map()) :: Changeset.t()
-  def changeset(%Repository{} = repository, params) do
+  def changeset(%Repository{} = repository, params \\ %{}) do
     repository
-    |> Ecto.Changeset.change(%{
-        full_name: params |> get_in([:full_name]),
-        description: params |> get_in([:description]),
-        language: params |> get_in([:language]),
-        stars_count: params |> get_in([:stargazers_count]),
-        license: params |> get_in([:license, :name])
-      })
+    |> Changeset.cast(params, ~w(full_name description language stars_count license)a)
+    |> Changeset.validate_required(~w(full_name)a)
   end
 
   @doc """
@@ -35,8 +30,16 @@ defmodule Omitestee.Paginator.Repository do
   """
   @spec new(map) :: t()
   def new(params) when is_map(params) do
+    repository_params = %{
+      full_name: params |> get_in([:full_name]),
+      description: params |> get_in([:description]),
+      language: params |> get_in([:language]),
+      stars_count: params |> get_in([:stargazers_count]),
+      license: params |> get_in([:license, :name])
+    }
+
     %Repository{}
-    |> Repository.changeset(params)
+    |> changeset(repository_params)
     |> Changeset.apply_changes()
   end
 end

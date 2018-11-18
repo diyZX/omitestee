@@ -107,6 +107,45 @@ defmodule Omitestee.Fixtures do
     end
   end
 
+  @doc false
+  def paginator() do
+    quote do
+      @repositories_attrs %{
+        elixir: %{
+          full_name: "elixir-lang/elixir",
+          description: "Elixir is awesome language",
+          language: "Elixir",
+          stars_count: 100_500,
+          license: "Apache License 2.0"
+        },
+        with_invalid_types: %{
+          full_name: 123,
+          stars_count: "test"
+        },
+        github_elixir: %{
+          full_name: "elixir-lang/elixir",
+          description: "Elixir is awesome language.",
+          language: "Elixir",
+          stargazers_count: 100_500,
+          license: %{name: "Apache License 2.0"}
+        },
+        github_phoenix: %{
+          full_name: "phoenixframework/phoenix",
+          description: "Productive. Reliable. Fast.",
+          language: "Elixir",
+          stargazers_count: 10_500,
+          license: %{name: "MIT license"}
+        }
+      }
+
+      def repository_fixture(repository) do
+        @repositories_attrs[repository]
+      end
+    end
+  end
+
+
+
   defmacro __using__(fixtures) when is_list(fixtures) do
     for fixture <- fixtures, is_atom(fixture),
       do: apply(__MODULE__, fixture, [])
